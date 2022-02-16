@@ -4,7 +4,7 @@ Created on Sun Feb  6 19:27:16 2022
 
 @author: Sharad
 """
-
+import cv2
 import numpy as np
 from tqdm import tqdm
 
@@ -93,6 +93,35 @@ def conv_image(img, filters):
     return output_img
 
 
+def pool_image(img):
+    
+    f_pooling = 2
+    step = 2
+
+    height_out = int((img.shape[0] - 2)/2 +1)
+    width_out = int((img.shape[1] - 2)/2 + 1)
+    
+    
+    output_img = np.zeros((height_out, width_out))
+    print(img.shape)
+    print(output_img.shape)
+    
+    ii = 0;
+    
+    for i in range(0, img.shape[0] - f_pooling + 1, step):
+        jj = 0;
+        for j in range(0, img.shape[1] - f_pooling + 1, step):
+            
+            patch = img[i:i+f_pooling, j:j+f_pooling]
+            
+            output_img[ii, jj] = np.max(patch)
+            
+            jj += 1
+        ii += 1
+    
+    return output_img
+
+
 def image_filter(img, filters):
     #print("img",img.shape)
     img = np.pad(img, (1, 1), mode='constant', constant_values=0)
@@ -110,3 +139,8 @@ def image_filter(img, filters):
     output_img = np.clip(output_img, 0, 255)
             
     return output_img
+
+def gray_img(img):
+    img1 = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img1 = cv2.cvtColor(img1, cv2.COLOR_RGB2GRAY)
+    return img1
